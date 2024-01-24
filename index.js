@@ -38,7 +38,6 @@ prompt({
     choices: [
         'View All Employees',
         'Add Employees',
-        'Update Employee',
         'View Managers Employees',
         'View All Roles',
         'Add Role',
@@ -84,6 +83,60 @@ if (answers.view === 'View All Roles') {
 
         
     })
+};
+if (answers.view === 'Add Role') {
+    // This selects the department ID by the name that the user inputs. 
+    const selectDepartmentIdSql = 'SELECT id FROM department WHERE name = ?';
+
+    inquirer
+        .prompt([
+            {
+                name: "role_title",
+                type: "input",
+                message: "Role title?",
+            },
+            {
+                name: "role_salary",
+                type: "number",
+                message: "Role salary?",
+            },
+            {
+                name: "role_department",
+                type: "input",
+                message: "Which department is it in?",
+            },
+        ])
+        .then((response) => {
+            // This gets department ID based on the department name. 
+            db.query(selectDepartmentIdSql, [response.role_department], (error, departmentResults) => {
+                if (error) {
+                    console.log("Error retieving department ID:", error);
+                    
+                } else {
+                    // This checks to make sure we retreived the Id from the department
+                    const departmentId = departmentResults[0] ? departmentResults[0].id : null;
+
+                    if (departmentId !== null) {
+                        // This is the SQL for the adding of a new role. 
+                        const insertRoleSql = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)';
+
+                        db.query(insertRoleSql, [response.role_title, response.role_salary, departmentId], (error, results) => {
+                            if (error) {
+                                console.log("Error inserting into db: ", error);
+                            } else {
+                                console.log("Added role: ", response.role_title);
+
+                            }
+                           
+                        })
+                    } else {
+                        console.log("Department not found. Role not added.");
+                       
+                    }
+                }
+            });
+
+        });
 };
 if (answers.view === 'Add Employees') {
    
@@ -190,6 +243,32 @@ if (answers.view === 'View All Departments') {
    
 })
 };
+if (answers.view === 'Add Department') {
+    inquirer
+    .prompt([
+        {
+            name: "department_name",
+            type: "input",
+            message: "Department name?",
+        },
+    ])
+    .then((response) => {
+        // This is the SQL for adding a new department. 
+        const insertDepartmentSql = 'INSERT INTO department (name) VALUES (?)';
+
+        db.query(insertDepartmentSql, [response.department_name], (error, results) => {
+            if (error) {
+                console.log("Error inserting into db: ", error);
+            } else {
+                console.log("Added department: ", response.department_name);
+
+            }
+
+        
+        })
+    })
+
+ };
 if (answers.view === 'Exit') {
     process.exit();
 }
