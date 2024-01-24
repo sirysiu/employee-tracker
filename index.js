@@ -63,20 +63,28 @@ if (answers.view === 'View Managers Employees') {
             prompt({
                 message: 'Choose a manager',
                 type: 'rawlist',
-                name: 'manager',
+                name: 'manager_id',
                 choices: managers
             }).then((answers) => {
-                console.log(answers);
+                db.query('SELECT * FROM employee WHERE ?', answers, (error, employees) => {
+                    console.table(employees);
+                });
             })
     });
-}
+};
 if (answers.view === 'View All Roles') {
-    db.query('SELECT * FROM employee', (error, employees) => {
-        if (error) console.error(error);
-        console.table(role);
-        start();
-    });
-}
+    // This SQL query selects all roles and displays them in a table. 
+    db.query('SELECT role.title AS Role_Title, role.id AS Role_ID, department.name AS Department_Name, role.salary AS Salary FROM role JOIN department ON role.department_id = department.id;', (error, results) => {
+        if (error) {
+            console.log("Error getting query: ", error);
+        } else {
+            console.log("View All Roles:")
+            console.table(results);
+        }
+
+        
+    })
+};
 if (answers.view === 'Exit') {
     process.exit();
 }
