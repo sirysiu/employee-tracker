@@ -56,10 +56,18 @@ prompt({
         });
 }
 if (answers.view === 'View Managers Employees') {
-    db.query('SELECT * FROM employee', (error, employees) => {
-        if (error) console.error(error);
-        console.table(employees);
-        start();
+    const prompt = inquirer.createPromptModule();
+    db.query(`SELECT id as value, CONCAT(first_name, ' ', last_name) as name
+     FROM employee`, (error, 
+        managers = [])  => {
+            prompt({
+                message: 'Choose a manager',
+                type: 'rawlist',
+                name: 'manager',
+                choices: managers
+            }).then((answers) => {
+                console.log(answers);
+            })
     });
 }
 if (answers.view === 'View All Roles') {
