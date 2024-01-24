@@ -4,7 +4,8 @@
     "inquire": "^0.4.8",
     "inquirer": "^8.2.4",
     "mysql": "^2.18.1",
-    "mysql2": "^3.7.1"
+    "mysql2": "^3.7.1",
+    "test": "^3.3.0"
   },
   "name": "employee-tracker",
   "description": "",
@@ -15,5 +16,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
